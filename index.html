@@ -1,0 +1,115 @@
+<head>
+    <title>Tortilla Web</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="bg"></div>
+    <div class="upperthing">
+        <a href="#">
+            <img style="width: 165px;" src="tortillaweb.png" alt="tortilla web">
+        </a>
+
+        <div class="title-area">
+            <h3>yes this is a website</h3>
+            <button class="b0" onclick="window.location.href='index.html'">Home</button>
+            <button class="b0" onclick="window.location.href='upload.html'">Upload</button>
+            <button class="b0" onclick="window.location.href='threads.html'">Threads</button>
+        </div>
+    </div>
+    <br><br><br><br>
+    <div id="messages">
+    <hr>
+    <h1 style="color: hotpink; text-align: center;">Loading...</h1>
+    </div>
+    <hr>
+
+        <script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBHPj2CSQH9U1sCM-A-Cr9hc80dG_rRjLs",
+    authDomain: "twdata-989ec.firebaseapp.com",
+    databaseURL: "https://twdata-989ec-default-rtdb.firebaseio.com",
+    projectId: "twdata-989ec",
+    storageBucket: "twdata-989ec.firebasestorage.app",
+    messagingSenderId: "1027351113381",
+    appId: "1:1027351113381:web:c811813a4b9d23b05d274c",
+    measurementId: "G-1DHF5K1NS1"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// 1. Read 'thread' from the URL (e.g. index.html?thread=coding)
+const urlParams = new URLSearchParams(window.location.search);
+const threadName = urlParams.get('thread');
+
+// 2. Decide where to load data from
+let dbPath = threadName ? `thread_messages/${threadName.toLowerCase().trim()}` : "messages";
+let pageTitle = "yes this is a website";
+
+if (threadName) {
+    dbPath = `thread_messages/${threadName.toLowerCase().trim()}`;
+    pageTitle = `yes this is an thread #${threadName}`;
+}
+
+// Update the subtitle to show which room we are in!
+document.querySelector(".title-area h3").innerText = pageTitle;
+
+// 3. Listen to the database
+onValue(ref(db, dbPath), snapshot => {
+    const data = snapshot.val();
+    let html = "";
+
+    if (data) {
+        for (let id in data) {
+            html += `<hr style="border: none; height: 1px; background-color: hotpink;">`;
+            html += `<p>${data[id].text}</p>`;
+        }
+        html += `<hr style="border: none; height: 1px; background-color: hotpink;">`;
+        html += `<h2>No more content!</h2>`;
+    } else {
+        html = `<p>No content in this thread yet.</p>`;
+    }
+
+    document.getElementById("messages").innerHTML = html;
+});
+
+        const images = [
+            "arrowleft.png",
+            "arrowright.png",
+            "arrowup.png",
+            "arrowdown.png"
+        ];
+        const size = 50;
+
+        const bg = document.getElementById("bg");
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        bg.appendChild(canvas);
+
+        const loaded = images.map(src => {
+            const img = new Image();
+            img.src = src;
+            return img;
+        });
+
+        function draw() {
+            for (let y = 0; y < canvas.height; y += size) {
+                for (let x = 0; x < canvas.width; x += size) {
+                    const img = loaded[Math.floor(Math.random() * loaded.length)];
+                    ctx.drawImage(img, x, y, size, size);
+                }
+            }
+        }
+
+        window.onload = () => {
+            setTimeout(draw, 100);
+        };
+        </script>
+</body>

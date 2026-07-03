@@ -1,0 +1,164 @@
+<head>
+    <title>Tortilla Web</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="bg"></div>
+    <div class="upperthing">
+        <a href="#">
+            <img style="width: 165px;" src="tortillaweb.png" alt="tortilla web">
+        </a>
+
+        <div class="title-area">
+            <h3>yes this is a website</h3>
+            <button class="b0" onclick="window.location.href='index.html'">Home</button>
+            <button class="b0" onclick="window.location.href='upload.html'">Upload</button>
+            <button class="b0" onclick="window.location.href='threads.html'">Threads</button>
+        </div>
+    </div>
+    <br><br><br><br>
+    <div id="messages"></div>
+    <hr>
+    <h2>Upload area</h2>
+    <p>Input thread title (input nothing for an global message)</p>
+    <input type="text" id="thread-input" placeholder="Thread title">
+    <hr>
+
+    <textarea id="msg" rows="30" placeholder="Enter some text for other people to see!"></textarea>
+    <p>Text formatting:</p>
+    <button onclick="addTag('<hr>')">Add an line</button>
+    <button onclick="addTag('<a href=\'https://example.com\'>Text</a>')">Add an link</button>
+    <button onclick="addTag('<marquee>Text</marquee>')">Add moving text</button>
+    <button onclick="addTag('<i>Text</i>')">Add italic text</button>
+    <button onclick="addTag('<b>Text</b>')">Add bold text</button>
+    <hr>
+    <button style="text-align: right;" onclick="send()">Send!</button>
+    <p style="color: gray">Tip: drag the bottom-left corner to change the size of the textbox!</p>
+
+        <script type="module">
+
+
+        import { initializeApp } from 
+        "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+        import {
+        getDatabase,
+        ref,
+        push,
+        onValue
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+        apiKey: "AIzaSyBHPj2CSQH9U1sCM-A-Cr9hc80dG_rRjLs",
+        authDomain: "twdata-989ec.firebaseapp.com",
+        databaseURL: "https://twdata-989ec-default-rtdb.firebaseio.com",
+        projectId: "twdata-989ec",
+        storageBucket: "twdata-989ec.firebasestorage.app",
+        messagingSenderId: "1027351113381",
+        appId: "1:1027351113381:web:c811813a4b9d23b05d274c",
+        measurementId: "G-1DHF5K1NS1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // 1. The send function that pushes data to Firebase
+    function send() {
+        const textarea = document.getElementById("msg");
+        const threadInput = document.getElementById("thread-input");
+        
+        const messageText = textarea.value;
+        // Get the typed thread name, make it lowercase, and remove extra spaces
+        const threadName = threadInput.value.trim().toLowerCase();
+
+        if (messageText.trim() !== "") {
+            // Decide database destination
+            let dbPath = "messages";
+            if (threadName !== "") {
+                dbPath = `thread_messages/${threadName}`;
+            }
+
+            push(ref(db, dbPath), {
+                text: messageText
+            })
+            .then(() => {
+                textarea.value = ""; // Clear message box
+                
+                // Redirect the user back to the thread they just posted in!
+                if (threadName !== "") {
+                    window.location.href = `index.html?thread=${threadName}`;
+                } else {
+                    window.location.href = "index.html";
+                }
+            })
+            .catch((error) => console.error("Database Error:", error));
+        }
+    }
+
+
+        // 3. CRUCIAL STEP: Expose functions so HTML onclick attributes can find them
+        window.send = send;
+        window.addTag = addTag;
+
+        // 4. Live database listener
+        onValue(ref(db, "messages"), snapshot => {
+            const data = snapshot.val();
+            let html = "";
+            console.log("if you dont see an error, that means im good at coding!")
+        });
+        //formatting text
+        function addTag(tag) {
+        const textarea = document.getElementById("msg");
+        
+        // Append the tag to the current content
+        textarea.value += tag; 
+        
+        // Optional: refocus the textarea so the user can immediately keep typing
+        textarea.focus(); 
+        }
+
+const images = [
+    "arrowleft.png",
+    "arrowright.png",
+    "arrowup.png",
+    "arrowdown.png"
+];
+const size = 50;
+
+const bg = document.getElementById("bg");
+
+// create a canvas
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+bg.appendChild(canvas);
+
+// load images first
+const loaded = images.map(src => {
+    const img = new Image();
+    img.src = src;
+    return img;
+});
+
+function draw() {
+    for (let y = 0; y < canvas.height; y += size) {
+        for (let x = 0; x < canvas.width; x += size) {
+
+            const img = loaded[Math.floor(Math.random() * loaded.length)];
+
+            ctx.drawImage(img, x, y, size, size);
+        }
+    }
+}
+
+// wait a bit so images load
+window.onload = () => {
+    setTimeout(draw, 100);
+};
+
+        </script>
+        <hr>
+</body>
