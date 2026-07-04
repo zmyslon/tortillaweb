@@ -1,0 +1,82 @@
+<head>
+    <title>Tortilla Web</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        p {
+            text-align: center;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="bg"></div>
+    <div class="upperthing">
+        <a href="#">
+            <img style="width: 165px;" src="tortillaweb.png" alt="tortilla web">
+        </a>
+
+        <div class="title-area">
+            <h3>yes this is a website</h3>
+            <button class="b0" onclick="window.location.href='index.html'">Home</button>
+            <button class="b0" onclick="window.location.href='upload.html'">Upload</button>
+            <button class="b0" onclick="window.location.href='threads.html'">Threads</button>
+            <button class="b0" onclick="window.location.href='news.html'">Updates</button>
+        </div>
+    </div>
+    <br><br><br><br>
+    <h1>Update 0.0</h1>
+    <p>Tortilla web released to the public.</p>
+    <hr>
+    <h1>Update 0.1</h1>
+    <p>Added underline button in Upload.</p>
+    <hr>
+    <h1>Update 0.2</h1>
+    <p>Added this Updates / News menu.</p>
+    <hr>
+    <script>
+        
+const images = [
+    "arrowleft.png",
+    "arrowright.png",
+    "arrowup.png",
+    "arrowdown.png"
+];
+const size = 50;
+
+const bg = document.getElementById("bg");
+
+// create a canvas
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+bg.appendChild(canvas);
+
+// load images first
+const loaded = images.map(src => {
+    const img = new Image();
+    img.src = src;
+    return img;
+});
+
+function draw() {
+    for (let y = 0; y < canvas.height; y += size) {
+        for (let x = 0; x < canvas.width; x += size) {
+
+            const img = loaded[Math.floor(Math.random() * loaded.length)];
+
+            ctx.drawImage(img, x, y, size, size);
+        }
+    }
+}
+
+// wait a bit so images load
+window.onload = () => {
+    setTimeout(draw, 100);
+};
+    </script>
+</body>
